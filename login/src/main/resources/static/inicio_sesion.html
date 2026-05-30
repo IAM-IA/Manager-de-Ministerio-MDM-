@@ -1,0 +1,89 @@
+<!--
+  @author Ismael
+  @version 1.0
+  @description Interfaz de autenticación de usuarios para el sistema Manager De Ministerios (MDM).
+               Conecta el formulario con el controlador REST de Spring Boot para control de accesos.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Manager De Ministerios</title>
+    <link rel="stylesheet" href="/static.css/inicio_sesion.css">
+</head>
+<body>
+
+    <!-- Botón de retorno a la página de bienvenida -->
+    <a href="/index.html">
+        <img src="/static.img/flecha.png" class="boton-volver" alt="Volver a la página de bienvenida">
+    </a>
+
+    <!-- Encabezado del módulo de inicio de sesión -->
+    <header class="titulo-insesion">
+        Iniciar Sesión
+    </header>
+
+    <!-- Formulario de autenticación gestionado mediante JavaScript asíncrono -->
+    <form id="formLogin" class="formulario-ingresar">
+            
+        <!-- Campos de credenciales vinculados con las propiedades del modelo de datos -->
+        <input type="email" id="correo" placeholder="Correo Electrónico..." class="campo" required>
+        <input type="password" id="contrasena" placeholder="Contraseña..." class="campo" required>
+
+        <!-- Controles de envío y enlaces secundarios de navegación interna -->
+        <button type="submit" class="boton-blanco-grande">Ingresar</button>
+        <a href="/registro.html" class="enlace-final">¿No tienes una cuenta?</a>
+
+    </form>
+
+    <!-- Barra inferior institucional de marcas y branding -->
+    <footer class="barra-inferior">
+        <div class="footer-izquierdo">
+            <img src="/static.img/Logo MDM.png" alt="Logo Manager de Ministerios" class="icono-footer">
+            <span class="texto-footer">Manager de Ministerios</span>
+        </div>
+        <div class="footer-derecho">
+            <img src="/static.img/logoSena.png" alt="Logo de la institución SENA" class="icono-footer">
+        </div>
+    </footer>
+
+    <!-- Lógica de procesamiento de login vía API REST -->
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault(); // Detiene el refresco nativo del formulario
+
+            // Estructura las credenciales alineadas con el backend
+            const credenciales = {
+                correo: document.getElementById('correo').value,
+                contrasena: document.getElementById('contrasena').value
+            };
+
+            // Ejecuta la petición asíncrona al endpoint de validación
+            fetch('/usuario/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(credenciales)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Credenciales inválidas');
+                }
+            })
+            .then(usuario => {
+                alert('¡Bienvenido de nuevo, ' + usuario.nombre + '!');
+                // Almacena temporalmente el rol en la sesión del navegador
+                sessionStorage.setItem('usuarioRol', usuario.rol);
+                window.location.href = '/principal.html'; // Redirecciona a la vista principal
+            })
+            .catch(error => {
+                alert('Error al iniciar sesión: Correo o contraseña incorrectos.');
+            });
+        });
+    </script>
+</body>
+</html>

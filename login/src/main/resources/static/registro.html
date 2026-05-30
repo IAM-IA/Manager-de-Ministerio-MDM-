@@ -1,0 +1,104 @@
+<!--
+  @author Ismael
+  @version 1.0
+  @description Formulario de inscripción de usuarios para el sistema Manager De Ministerios (MDM).
+               Se conecta directamente al backend de Spring Boot mediante arquitectura REST.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Manager De Ministerios</title>
+    <link rel="stylesheet" href="/static.css/registro.css">
+</head>
+<body>
+    
+    <!-- Botón de retorno a la página de bienvenida -->
+    <a href="/index.html">
+        <img src="/static.img/flecha.png" class="boton-volver" alt="Volver a inicio">
+    </a>
+
+    <!-- Encabezado del módulo de registro -->
+    <header class="titulo-registro">
+        Registro
+    </header>
+
+    <!-- Formulario de inscripción gestionado por JavaScript -->
+    <form id="formRegistro" class="formulario-registro">
+        
+        <!-- Campos de datos básicos mapeados con los atributos de la entidad Usuario -->
+        <input type="text" id="nombre" placeholder="Nombre Completo..." class="campo" required>
+        <input type="email" id="correo" placeholder="Correo Electrónico..." class="campo" required>
+
+        <!-- Selección de rol de usuario -->
+        <p class="pregunta">¿Qué eres en tu iglesia?</p>
+
+        <div class="contenedor-opciones">
+            <label class="opcion-blanca">
+                <input type="radio" name="rol" value="SIERVO" required>
+                <span>Siervo</span>
+            </label>
+            <label class="opcion-blanca">
+                <input type="radio" name="rol" value="LIDER">
+                <span>Líder</span>
+            </label>
+        </div>
+
+        <!-- Credenciales de acceso de seguridad -->
+        <input type="password" id="contrasena" placeholder="Contraseña..." class="campo" required>
+        <p class="texto-pequeno">¡Recuerda la contraseña, la necesitarás después!</p>
+
+        <!-- Controles de envío y navegación interna -->
+        <button type="submit" class="boton-blanco-grande">Guardar</button>
+        <a href="/inicio_sesion.html" class="enlace-final">¿Ya tienes una cuenta?</a>
+    </form>
+
+    <!-- Barra inferior institucional de branding -->
+    <footer class="barra-inferior">
+        <div class="footer-izquierdo">
+            <img src="/static.img/Logo MDM.png" alt="Logo Manager de Ministerios" class="icono-footer">
+            <span class="texto-footer">Manager de Ministerios</span>
+        </div>
+        <div class="footer-derecho">
+            <img src="/static.img/logoSena.png" alt="Logo de la institución SENA" class="icono-footer">
+        </div>
+    </footer>
+
+    <!-- Lógica en JavaScript para enviar los datos de forma nativa a la API REST -->
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que la página se recargue de forma convencional
+            
+            // Construye el objeto de datos emparejado con los campos de la clase Usuario.java
+            const datosUsuario = {
+                nombre: document.getElementById('nombre').value,
+                correo: document.getElementById('correo').value,
+                contrasena: document.getElementById('contrasena').value,
+                rol: document.querySelector('input[name="rol"]:checked').value
+            };
+
+            // Realiza la petición POST asíncrona al controlador de Spring Boot
+            fetch('/usuario/nuevo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datosUsuario)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Usuario registrado exitosamente en la base de datos.');
+                    window.location.href = '/inicio_sesion.html'; // Redirecciona al inicio de sesión
+                } else {
+                    alert('Error al registrar el usuario. Comprueba si el correo ya existe.');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la conexión:', error);
+                alert('No se pudo conectar con el servidor de la base de datos.');
+            });
+        });
+    </script>
+</body>
+</html>
