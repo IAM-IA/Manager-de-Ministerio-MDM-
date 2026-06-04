@@ -1,7 +1,7 @@
 body {
     /* Fondo con gradiente oscuro y la imagen original con espacio escapado */
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                url('/static.img/fondo_intro.webp') no-repeat center center fixed;
+                url('/img/fondo_intro.webp') no-repeat center center fixed;
     background-size: cover;
     font-family: 'Segoe UI', Arial, sans-serif;
     display: flex;
